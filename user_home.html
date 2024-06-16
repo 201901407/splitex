@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SplitEx | Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <style>
+        body {
+            align-items: center;
+            background-color: #000;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .greeting {
+            background-color: slateblue;
+            width: 85vw;
+            margin: 5vh 5.5vw 2vh 5.5vw;
+            color: white;
+            padding: 2vh 2vw;
+            text-align: center;
+            font-family: cursive;
+            border: 2px rgb(81, 81, 252);
+            border-radius: 1vw;
+        }
+
+        .status {
+            color: white;
+            background-color: slateblue;
+            width: 85vw;
+            margin: 5vh 5.5vw 2vh 5.5vw;
+            padding: 2vh 2vw;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            border: 2px rgb(81, 81, 252);
+            border-radius: 1vw;
+        }
+
+        .listr {
+            background-color: slateblue;
+            width: 85vw;
+            margin: 5vh 5.5vw 2vh 5.5vw;
+            padding: 2vh 2vw;
+            border: 2px rgb(81, 81, 252);
+            border-radius: 1vw;
+            color: wheat;
+        }
+
+        .submit {
+            background-color: darkblue;
+            border-radius: 12px;
+            border: 0;
+            box-sizing: border-box;
+            color: #eee;
+            cursor: pointer;
+            font-size: 22px;
+            height: 50px;
+            margin-top: 18px;
+            text-align: center;
+            width: 250px;
+        }
+
+        .submit:active {
+            background-color: #06b;
+        }
+
+        th {
+            width: 33%;
+            font-size: 2em;
+            padding: 6vh 2vw 3vh 2vw;
+            font-family: cursive;
+            color: whitesmoke;
+        }
+
+        td {
+            width: 33%;
+            font-size: 1.5em;
+            padding: 0.5vh 4.5vw;
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            color: whitesmoke;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .titleh {
+            margin: 10vh 0 0 18vw;
+            color: white;
+            font-family: cursive;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="greeting">
+        <h1>Hey {{ .UserObj.Name }}! Welcome to SplitEx.</h1>
+    </div>
+    <div class="status">
+        <h1>Here are your pending transactions:</h1>
+        <div>
+            <ul>
+                {{ with .Transaction}}
+                {{ range . }}
+                <li>
+                    {{ if eq .RecieverPerson.Id $.UserObj.Id}}
+                    <h2 style="color: rgb(122, 255, 122);">You have to recieve payment of {{ .Amount }} from {{.FromPerson.Name}}.</h2>
+                    {{ else }}
+                    <h2 style="color: rgb(255, 80, 80);">You have to pay {{.Amount}} to {{.RecieverPerson.Name}}.</h2>
+                    {{end}}
+                </li>
+                {{end}}
+                {{end}}
+            </ul>
+        </div>
+    </div>
+    <div class="listr">
+        <button class="submit"><a href="/user/{{ .UserObj.Id }}/addtransaction"
+                style="text-decoration: none; color: white;">+ Create</a></button>
+        <h1 class="titleh">Your Transactions</h1>
+        <table>
+            <tr>
+                <th>Amount</th>
+                <th>Split Between</th>
+                <th>Timestamp</th>
+            </tr>
+            {{ with .AllTransactions}}
+            {{ range . }}
+            <tr>
+                <td>{{ .Amount }}</td>
+                <td>
+                    <ul>
+                        {{ with .SplitBetween }}
+                        {{ range . }}
+                        <li>
+                            {{ .Name }}
+                        </li>
+                        {{ end }}
+                        {{ end }}
+                    </ul>
+                </td>
+                <td>{{ .Timestamp }}</td>
+            </tr>
+            {{ end }}
+            {{ end }}
+        </table>
+    </div>
+</body>

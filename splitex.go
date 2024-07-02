@@ -42,16 +42,24 @@ type mainRouter struct {
 	transactionGraph *[]transactionGraphNode
 }
 
-type userHomeStruct struct {
-	UserObj      User
-	Transaction  []transactionGraphNode
-	AllTransactions []Transaction
-}
-
 type transactionStruct struct {
 	Error    string
 	UserList []User
 	UserId   int
+}
+
+type homeTransactionStruct struct {
+	Id           int
+	Amount       float64
+	SplitBetween []*User
+	CreatedBy    *User
+	Timestamp    string
+}
+
+type userHomeStruct struct {
+	UserObj      User
+	Transaction  []transactionGraphNode
+	AllTransactions []homeTransactionStruct
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -95,10 +103,16 @@ func userHome(w http.ResponseWriter, r *http.Request, userObj User, transactionG
 		}
 	}
 
-	userAllTrans := []Transaction{}
+	userAllTrans := []homeTransactionStruct{}
 	for _, each_t := range *allTrans {
 		if userObj.Id == each_t.CreatedBy.Id {
-			userAllTrans = append(userAllTrans, each_t)
+			userAllTrans = append(userAllTrans, homeTransactionStruct{
+				Id: each_t.Id,
+				Amount: each_t.Amount,
+				CreatedBy: each_t.CreatedBy,
+				SplitBetween: each_t.SplitBetween,
+				Timestamp: time.Unix(each_t.Timestamp, 0).UTC().Format(time.DateOnly),
+			})
 
 		}
 	}
